@@ -1,5 +1,5 @@
 const $btn = document.getElementById('btn-kick');
-const $characterAttack = document.getElementById('character-attack');
+const $youAttack = document.getElementById('character-attack');
 const $enemyAttack = document.getElementById('enemy-attack');
 
 const PIKACHU = {
@@ -57,13 +57,7 @@ const CHARMANDER = {
 const youPokemon = PIKACHU;
 const enemyPokemon = CHARMANDER;
 
-// $btn.addEventListener('click', function() {
-//     console.log('Kick!');
-//     changeHP(random(10), CHARMANDER);
-
-// })
-
-$characterAttack.addEventListener('click', function(e) {
+$youAttack.addEventListener('click', function(e) {
     const action = e.target.id
     attack(youPokemon, action, enemyPokemon)
 })
@@ -76,7 +70,6 @@ $enemyAttack.addEventListener('click', function(e) {
 function attack(pokemon, action, target) {
     for (let key in pokemon.attack) {
         if (key == action) {
-            // console.log(typeof pokemon.attack[key].name);
             console.log(pokemon.attack[key].name);
             console.log(`Покемон ${pokemon.name} использует атаку ${pokemon.attack[key].name} на покемона ${target.name} силой ${pokemon.attack[key].power}`);
             changeHP(random(pokemon.attack[key].power), target);
@@ -102,11 +95,22 @@ function changeHP(count, pokemon) {
     if (pokemon.damageHP < count) {
         pokemon.damageHP = 0;
         alert(`Покемон ${pokemon.name} проиграл бой!`);
-        // $btn.disabled = true;
+        endGame($youAttack);
+        endGame($enemyAttack);
     } else {
         pokemon.damageHP -= count;
     }
     renderHP(pokemon);
+}
+
+function endGame(pokemon) {
+    const $controlButton = pokemon.querySelectorAll('.button');
+    
+    for (const key in $controlButton) {
+        if ($controlButton[key].className) {
+            $controlButton[key].disabled = true;
+        }
+    }
 }
 
 function random(power) {
