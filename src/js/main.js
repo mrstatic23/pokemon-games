@@ -1,11 +1,31 @@
-const $btn = document.getElementById('btn-kick')
+const $btn = document.getElementById('btn-kick');
+const $characterAttack = document.getElementById('character-attack');
+const $enemyAttack = document.getElementById('enemy-attack');
 
 const PIKACHU = {
     name: 'Pikachu',
     fullHP: 100,
     damageHP: 100,
     elHP: document.getElementById('health-character'),
-    elProgressBar: document.getElementById('progressbar-character')
+    elProgressBar: document.getElementById('progressbar-character'),
+    attack: {
+        thundershock: {
+            name: 'Удар грома',
+            power: 7
+        },
+        quickAttack: {
+            name: 'Быстрая атака',
+            power: 10
+        },
+        slam: {
+            name: 'Хлопок',
+            power: 2
+        },
+        thunderbolt: {
+            name: 'Удар молнии',
+            power: 40
+        }
+    }
 }
 
 const CHARMANDER = {
@@ -13,14 +33,57 @@ const CHARMANDER = {
     fullHP: 100,
     damageHP: 100,
     elHP: document.getElementById('health-enemy'),
-    elProgressBar: document.getElementById('progressbar-enemy')
-}
+    elProgressBar: document.getElementById('progressbar-enemy'),
+    attack: {
+        scratch: {
+            name: 'Царапка',
+            power: 10
+        },
+        ember: {
+            name: 'Тлеющие угли',
+            power: 5
+        },
+        fireFang: {
+            name: 'Огненный клык',
+            power: 11
+        },
+        flameBurst: {
+            name: 'Взрыв пламени',
+            power: 3
+        }
+    }
+};
 
-$btn.addEventListener('click', function() {
-    console.log('Kick!');
-    changeHP(random(10), CHARMANDER);
+const youPokemon = PIKACHU;
+const enemyPokemon = CHARMANDER;
 
+// $btn.addEventListener('click', function() {
+//     console.log('Kick!');
+//     changeHP(random(10), CHARMANDER);
+
+// })
+
+$characterAttack.addEventListener('click', function(e) {
+    const action = e.target.id
+    attack(youPokemon, action, enemyPokemon)
 })
+
+$enemyAttack.addEventListener('click', function(e) {
+    const action = e.target.id
+    attack(enemyPokemon, action, youPokemon)
+})
+
+function attack(pokemon, action, target) {
+    for (let key in pokemon.attack) {
+        if (key == action) {
+            // console.log(typeof pokemon.attack[key].name);
+            console.log(pokemon.attack[key].name);
+            console.log(`Покемон ${pokemon.name} использует атаку ${pokemon.attack[key].name} на покемона ${target.name} силой ${pokemon.attack[key].power}`);
+            changeHP(random(pokemon.attack[key].power), target);
+            return
+        }
+    }
+}
 
 function renderHP(pokemon) {
     renderHPLife(pokemon);
@@ -39,7 +102,7 @@ function changeHP(count, pokemon) {
     if (pokemon.damageHP < count) {
         pokemon.damageHP = 0;
         alert(`Покемон ${pokemon.name} проиграл бой!`);
-        $btn.disabled = true;
+        // $btn.disabled = true;
     } else {
         pokemon.damageHP -= count;
     }
@@ -57,8 +120,8 @@ function random(power) {
 
 function init() {
     console.log('Start Game!!!');
-    renderHP(PIKACHU);
-    renderHP(CHARMANDER);
+    renderHP(youPokemon);
+    renderHP(enemyPokemon);
 }
 
 init();
