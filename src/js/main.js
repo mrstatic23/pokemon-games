@@ -4,8 +4,8 @@ const $enemyAttack = document.getElementById('enemy-attack');
 
 const PIKACHU = {
     name: 'Pikachu',
-    fullHP: 100,
-    currentHP: 100,
+    fullHP: 150,
+    currentHP: 150,
     elHP: document.getElementById('health-character'),
     elProgressBar: document.getElementById('progressbar-character'),
     abilityBtn: document.getElementById('character-attack'),
@@ -38,7 +38,7 @@ const PIKACHU = {
 
 const CHARMANDER = {
     name: 'Charmander',
-    fullHP: 100,
+    fullHP: 200,
     currentHP: 100,
     elHP: document.getElementById('health-enemy'),
     elProgressBar: document.getElementById('progressbar-enemy'),
@@ -95,7 +95,7 @@ function renderHPLife() {
 }
 
 function renderHPProgressBar() {
-    this.elProgressBar.style.width = `${this.currentHP}%`
+    this.elProgressBar.style.width = `${(this.currentHP/this.fullHP) * 100}%`
 }
 
 function changeHP(attackPower, targetPokemon) {
