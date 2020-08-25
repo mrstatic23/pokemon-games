@@ -73,18 +73,6 @@ const CHARMANDER = {
 const youPokemon = PIKACHU;
 const enemyPokemon = CHARMANDER;
 
-youPokemon.abilityBtn.addEventListener('click', function(e) {
-    const action = e.target.id;
-
-    youPokemon.attack(action, enemyPokemon);
-});
-
-$enemyAttack.addEventListener('click', function(e) {
-    const action = e.target.id;
-
-    enemyPokemon.attack(action, youPokemon);
-});
-
 function attack(action, targetPokemon) {
     for (let key in this.ability) {
         if (key == action) {
@@ -139,7 +127,7 @@ function random(power) {
     if (damage == 0) {
         alert('Miss!');
     }
-    
+
     return damage;
 }
 
@@ -148,6 +136,18 @@ function init() {
     youPokemon.renderHP();
     enemyPokemon.renderHP();
 }
+
+youPokemon.abilityBtn.addEventListener('click', function(e) {
+    const action = e.target.id;
+
+    youPokemon.attack(action, enemyPokemon);
+});
+
+$enemyAttack.addEventListener('click', function(e) {
+    const action = e.target.id;
+
+    enemyPokemon.attack(action, youPokemon);
+});
 
 init();
 
