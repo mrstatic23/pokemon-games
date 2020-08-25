@@ -1,70 +1,132 @@
+const $btn = document.getElementById('btn-kick');
+const $youAttack = document.getElementById('character-attack');
+const $enemyAttack = document.getElementById('enemy-attack');
 
-
-firstTask.onclick = function() {
-  const firstRow = prompt('Введите первую строку:');
-  const secontRow = prompt('Введите вторую строку:');
-
-  function getRow(firstRow, secontRow) {
-    let firstRowCountA = null;
-    let secontRowCountA = null;
-
-    for (i = 0; i < firstRow.length; i++) {
-      if (firstRow.charAt(i) === 'а' || firstRow.charAt(i) === 'А') {
-        firstRowCountA++;
-      }
+const PIKACHU = {
+    name: 'Pikachu',
+    fullHP: 100,
+    damageHP: 100,
+    elHP: document.getElementById('health-character'),
+    elProgressBar: document.getElementById('progressbar-character'),
+    attack: {
+        thundershock: {
+            name: 'Удар грома',
+            power: 7
+        },
+        quickAttack: {
+            name: 'Быстрая атака',
+            power: 10
+        },
+        slam: {
+            name: 'Хлопок',
+            power: 2
+        },
+        thunderbolt: {
+            name: 'Удар молнии',
+            power: 40
+        }
     }
+}
 
-    for (i = 0; i < secontRow.length; i++) {
-      if (secontRow.charAt(i) === 'а' || secontRow.charAt(i) === 'А') {
-        secontRowCountA++;
-      }
+const CHARMANDER = {
+    name: 'Charmander',
+    fullHP: 100,
+    damageHP: 100,
+    elHP: document.getElementById('health-enemy'),
+    elProgressBar: document.getElementById('progressbar-enemy'),
+    attack: {
+        scratch: {
+            name: 'Царапка',
+            power: 10
+        },
+        ember: {
+            name: 'Тлеющие угли',
+            power: 5
+        },
+        fireFang: {
+            name: 'Огненный клык',
+            power: 11
+        },
+        flameBurst: {
+            name: 'Взрыв пламени',
+            power: 3
+        }
     }
-    return(firstRowCountA > secontRowCountA ? firstRow : secontRow);
-  }
-
-  alert(getRow(firstRow, secontRow));
 };
 
-secondTask.onclick = function() {
-  const telNumber = prompt('Введите 12-ти символьный номер телефона в формате +7xxxxxxxxxx:');
+const youPokemon = PIKACHU;
+const enemyPokemon = CHARMANDER;
 
-  function formattedPhone(phoneNumber) {
+$youAttack.addEventListener('click', function(e) {
+    const action = e.target.id
+    attack(youPokemon, action, enemyPokemon)
+})
 
-    let formattedPhoneNumber = '';
+$enemyAttack.addEventListener('click', function(e) {
+    const action = e.target.id
+    attack(enemyPokemon, action, youPokemon)
+})
 
-    if (phoneNumber.length != 12) {
-      return 'Указанный номер содержит больше или меньше 12-ти символов!'
-    }
-
-    if (!Number(phoneNumber)) {
-      return 'Указанный номер содержит значения отличные от чисел!'
-    }
-
-    if (phoneNumber.charAt(0) != '+') {
-      return 'Номер должен начинаться с знака +8!'
-    }
-
-      for (i = 0; i < phoneNumber.length; i++) {
-
-        if (i == 2) {
-          formattedPhoneNumber += ` (${phoneNumber.charAt(i)}`;
-          continue
+function attack(pokemon, action, target) {
+    for (let key in pokemon.attack) {
+        if (key == action) {
+            console.log(pokemon.attack[key].name);
+            console.log(`Покемон ${pokemon.name} использует атаку ${pokemon.attack[key].name} на покемона ${target.name} силой ${pokemon.attack[key].power}`);
+            changeHP(random(pokemon.attack[key].power), target);
+            return
         }
+    }
+}
 
-        if (i == 4) {
-          formattedPhoneNumber += `${phoneNumber.charAt(i)}) `;
-          continue
+function renderHP(pokemon) {
+    renderHPLife(pokemon);
+    renderHPProgressBar(pokemon);
+}
+
+function renderHPLife(pokemon) {
+    pokemon.elHP.innerText = `${pokemon.damageHP} / ${pokemon.fullHP}`
+}
+
+function renderHPProgressBar(pokemon) {
+    pokemon.elProgressBar.style.width = `${pokemon.damageHP}%`
+}
+
+function changeHP(count, pokemon) {
+    if (pokemon.damageHP < count) {
+        pokemon.damageHP = 0;
+        alert(`Покемон ${pokemon.name} проиграл бой!`);
+        endGame($youAttack);
+        endGame($enemyAttack);
+    } else {
+        pokemon.damageHP -= count;
+    }
+    renderHP(pokemon);
+}
+
+function endGame(pokemon) {
+    const $controlButton = pokemon.querySelectorAll('.button');
+    
+    for (const key in $controlButton) {
+        if ($controlButton[key].className) {
+            $controlButton[key].disabled = true;
         }
+    }
+}
 
-        if (i == 7 || i == 9) {
-          formattedPhoneNumber += `${phoneNumber.charAt(i)}-`;
-          continue
-        }
-        formattedPhoneNumber += phoneNumber.charAt(i);
-      }
+function random(power) {
+    const damage = Math.round(Math.random() * power);
+    console.log(damage);
+    if (damage == 0) {
+        alert('Miss!');
+    }
+    return damage;
+}
 
-    return formattedPhoneNumber;
-  }
+function init() {
+    console.log('Start Game!!!');
+    renderHP(youPokemon);
+    renderHP(enemyPokemon);
+}
 
-  alert(formattedPhone(telNumber));
-};
+init();
+
