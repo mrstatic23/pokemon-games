@@ -1,14 +1,15 @@
 const $btn = document.getElementById('btn-kick');
-const $youAttack = document.getElementById('character-attack');
+// const $youAttack = document.getElementById('character-attack');
 const $enemyAttack = document.getElementById('enemy-attack');
 
 const PIKACHU = {
     name: 'Pikachu',
     fullHP: 100,
-    damageHP: 100,
+    currentHP: 100,
     elHP: document.getElementById('health-character'),
     elProgressBar: document.getElementById('progressbar-character'),
-    attack: {
+    abilityBtn: document.getElementById('character-attack'),
+    ability: {
         thundershock: {
             name: 'Удар грома',
             power: 7
@@ -25,16 +26,24 @@ const PIKACHU = {
             name: 'Удар молнии',
             power: 40
         }
-    }
+    },
+    
+    renderHP,
+    renderHPLife,
+    renderHPProgressBar,
+    changeHP,
+    attack,
+    endGame
 }
 
 const CHARMANDER = {
     name: 'Charmander',
     fullHP: 100,
-    damageHP: 100,
+    currentHP: 100,
     elHP: document.getElementById('health-enemy'),
     elProgressBar: document.getElementById('progressbar-enemy'),
-    attack: {
+    abilityBtn: document.getElementById('enemy-attack'),
+    ability: {
         scratch: {
             name: 'Царапка',
             power: 10
@@ -51,60 +60,71 @@ const CHARMANDER = {
             name: 'Взрыв пламени',
             power: 3
         }
-    }
+    },
+
+    renderHP,
+    renderHPLife,
+    renderHPProgressBar,
+    changeHP,
+    attack,
+    endGame
 };
 
 const youPokemon = PIKACHU;
 const enemyPokemon = CHARMANDER;
 
-$youAttack.addEventListener('click', function(e) {
-    const action = e.target.id
-    attack(youPokemon, action, enemyPokemon)
-})
+youPokemon.abilityBtn.addEventListener('click', function(e) {
+    const action = e.target.id;
+
+    youPokemon.attack(action, enemyPokemon);
+});
 
 $enemyAttack.addEventListener('click', function(e) {
-    const action = e.target.id
-    attack(enemyPokemon, action, youPokemon)
-})
+    const action = e.target.id;
 
-function attack(pokemon, action, target) {
-    for (let key in pokemon.attack) {
+    enemyPokemon.attack(action, youPokemon);
+});
+
+function attack(action, targetPokemon) {
+    for (let key in this.ability) {
         if (key == action) {
-            console.log(pokemon.attack[key].name);
-            console.log(`Покемон ${pokemon.name} использует атаку ${pokemon.attack[key].name} на покемона ${target.name} силой ${pokemon.attack[key].power}`);
-            changeHP(random(pokemon.attack[key].power), target);
+            const attackPower = random(this.ability[key].power)
+
+            console.log(`Покемон ${this.name} использует способность ${this.ability[key].name} на покемона ${targetPokemon.name} силой ${attackPower}`);
+            changeHP(attackPower, targetPokemon);
             return
         }
     }
 }
 
-function renderHP(pokemon) {
-    renderHPLife(pokemon);
-    renderHPProgressBar(pokemon);
+function renderHP() {
+    this.renderHPLife();
+    this.renderHPProgressBar();
 }
 
-function renderHPLife(pokemon) {
-    pokemon.elHP.innerText = `${pokemon.damageHP} / ${pokemon.fullHP}`
+function renderHPLife() {
+    this.elHP.innerText = `${this.currentHP} / ${this.fullHP}`
 }
 
-function renderHPProgressBar(pokemon) {
-    pokemon.elProgressBar.style.width = `${pokemon.damageHP}%`
+function renderHPProgressBar() {
+    this.elProgressBar.style.width = `${this.currentHP}%`
 }
 
-function changeHP(count, pokemon) {
-    if (pokemon.damageHP < count) {
-        pokemon.damageHP = 0;
-        alert(`Покемон ${pokemon.name} проиграл бой!`);
-        endGame($youAttack);
-        endGame($enemyAttack);
+function changeHP(attackPower, targetPokemon) {
+    if (targetPokemon.currentHP < attackPower) {
+        targetPokemon.currentHP = 0;
+        alert(`Покемон ${targetPokemon.name} проиграл бой!`);
+        youPokemon.endGame();
+        enemyPokemon.endGame();
     } else {
-        pokemon.damageHP -= count;
+        targetPokemon.currentHP -= attackPower;
     }
-    renderHP(pokemon);
+
+    targetPokemon.renderHP();
 }
 
-function endGame(pokemon) {
-    const $controlButton = pokemon.querySelectorAll('.button');
+function endGame() {
+    const $controlButton = this.abilityBtn.querySelectorAll('.button');
     
     for (const key in $controlButton) {
         if ($controlButton[key].className) {
@@ -115,17 +135,18 @@ function endGame(pokemon) {
 
 function random(power) {
     const damage = Math.round(Math.random() * power);
-    console.log(damage);
+
     if (damage == 0) {
         alert('Miss!');
     }
+    
     return damage;
 }
 
 function init() {
     console.log('Start Game!!!');
-    renderHP(youPokemon);
-    renderHP(enemyPokemon);
+    youPokemon.renderHP();
+    enemyPokemon.renderHP();
 }
 
 init();
