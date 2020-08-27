@@ -37,7 +37,7 @@ const PIKACHU = {
 const CHARMANDER = {
     name: 'Charmander',
     fullHP: 200,
-    currentHP: 100,
+    currentHP: 200,
     elHP: document.getElementById('health-enemy'),
     elProgressBar: document.getElementById('progressbar-enemy'),
     abilityBtn: document.getElementById('enemy-attack'),
@@ -85,8 +85,13 @@ function attack(action, targetPokemon) {
 
 function generateLog(attackerPokemon, targetPokemon, attackPower, abilityId) {
     let logsArr;
+    let res;
+
+    const $p = document.createElement('p');
+    const $logs = document.querySelector('#logs');
 
     const missLog = `О нет! ${attackerPokemon.name} промахнулся.`
+    
 
     switch (abilityId) {
         case 'thundershock':
@@ -139,7 +144,14 @@ function generateLog(attackerPokemon, targetPokemon, attackPower, abilityId) {
             break;
     }
 
-    return attackPower === 0 ? missLog : `${logsArr[((Math.ceil(Math.random() * 2)) - 1)]} ${attackerPokemon.name} [${attackerPokemon.currentHP} / ${attackerPokemon.fullHP}], ${targetPokemon.name} [${targetPokemon.currentHP} / ${targetPokemon.fullHP}]`;
+    res = attackPower === 0 ? missLog : `${logsArr[((Math.ceil(Math.random() * 2)) - 1)]} ${attackerPokemon.name} [${attackerPokemon.currentHP} / ${attackerPokemon.fullHP}], ${targetPokemon.name} [${targetPokemon.currentHP} / ${targetPokemon.fullHP}]`;
+
+    $p.innerText = res;
+    
+    $logs.insertBefore($p, $logs.firstElementChild);
+
+
+    return res
 }
 
 function renderHP() {

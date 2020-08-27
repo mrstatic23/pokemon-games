@@ -456,6 +456,9 @@ h1 {
     display: flex;
     margin: 0 auto;
     justify-content: center;
+
+    flex-direction: column;
+    max-width: 1024px;
 }
 
 .row {
@@ -473,4 +476,23 @@ h1 {
 
 .action label {
     padding: 6px 0;
+}
+
+#logs {
+    max-width: 1024px;
+
+    overflow-y: hidden;
+    height: 150px;
+    background-color: #fff;
+
+    text-align: left;
+
+    padding: 5px;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+
+}
+
+#logs p {
+    margin: 5px 10px 10px 10px;
 }
