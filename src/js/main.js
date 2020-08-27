@@ -1,6 +1,6 @@
 const $btn = document.getElementById('btn-kick');
 // const $youAttack = document.getElementById('character-attack');
-const $enemyAttack = document.getElementById('enemy-attack');
+// const $enemyAttack = document.getElementById('enemy-attack');
 
 const PIKACHU = {
     name: 'Pikachu',
@@ -143,11 +143,10 @@ youPokemon.abilityBtn.addEventListener('click', function(e) {
     youPokemon.attack(action, enemyPokemon);
 });
 
-$enemyAttack.addEventListener('click', function(e) {
+enemyPokemon.abilityBtn.addEventListener('click', function(e) {
     const action = e.target.id;
 
     enemyPokemon.attack(action, youPokemon);
 });
 
 init();
-
