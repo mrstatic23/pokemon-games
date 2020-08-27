@@ -139,9 +139,7 @@ function generateLog(attackerPokemon, targetPokemon, attackPower, abilityId) {
             break;
     }
 
-    return attackPower === 0 ? missLog : `${logsArr[((Math.ceil(Math.random() * 2)) - 1)]} ${attackerPokemon.name} [${attackerPokemon.currentHP} / ${attackerPokemon.fullHP}], ${targetPokemon.name} [${targetPokemon.currentHP} / ${targetPokemon.fullHP}]`; 
-    // console.log(logsArr.length);
-    // return attackPower === 0 ? missLog : `${logsArr[random(logsArr.length) - 1]} ${attackerPokemon.name} [${attackerPokemon.currentHP} / ${attackerPokemon.fullHP}], ${targetPokemon.name} [${targetPokemon.currentHP} / ${targetPokemon.fullHP}]`; 
+    return attackPower === 0 ? missLog : `${logsArr[((Math.ceil(Math.random() * 2)) - 1)]} ${attackerPokemon.name} [${attackerPokemon.currentHP} / ${attackerPokemon.fullHP}], ${targetPokemon.name} [${targetPokemon.currentHP} / ${targetPokemon.fullHP}]`;
 }
 
 function renderHP() {
@@ -181,11 +179,8 @@ function endGame() {
     }
 }
 
-function random(count) {
-    const res = Math.floor(Math.random() * count);
-    console.log(res);
-    // return Math.floor(Math.random() * power);
-    return res
+function random(power) {
+    return Math.floor(Math.random() * power);
 }
 
 function init() {
