@@ -1,6 +1,4 @@
-const $btn = document.getElementById('btn-kick');
-// const $youAttack = document.getElementById('character-attack');
-// const $enemyAttack = document.getElementById('enemy-attack');
+'use strict';
 
 const PIKACHU = {
     name: 'Pikachu',
