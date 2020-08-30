@@ -119,7 +119,7 @@ function generateLog(attackerPokemon, targetPokemon, attackPower, abilityId) {
       break;
     case 'scratch':
       logsArr = [
-        `${attackerPokemon.name} царапет своими острыми когтями ${targetPokemon.name}. ${targetPokemon.name} получил ${attackPower} урона.`,
+        `${attackerPokemon.name} царапает своими острыми когтями ${targetPokemon.name}. ${targetPokemon.name} получил ${attackPower} урона.`,
         `Острые когти ${attackerPokemon.name} царапают ${targetPokemon.name} на ${attackPower} урона.`,
       ];
       break;
@@ -132,7 +132,7 @@ function generateLog(attackerPokemon, targetPokemon, attackPower, abilityId) {
     case 'fireFang':
       logsArr = [
         `${attackerPokemon.name} кусает раскаленными зубами ${targetPokemon.name}. ${targetPokemon.name} получил ${attackPower} урона.`,
-        `Расскаленные до бела зубы ${attackerPokemon.name} впиваются бедного ${targetPokemon.name} и наносят ему ${attackPower} урона.`,
+        `Раскаленные до бела зубы ${attackerPokemon.name} впиваются бедного ${targetPokemon.name} и наносят ему ${attackPower} урона.`,
       ];
       break;
     case 'flameBurst':
