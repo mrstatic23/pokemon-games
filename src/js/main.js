@@ -1,15 +1,23 @@
-'use strict'
+'use strict';
 
 const POKEMON = {
   renderHP: function() {
     this.renderHPLife();
     this.renderHPProgressBar();
+    this.renderButtonText();
   },
   renderHPLife: function() {
     this.elHP.innerText = `${this.currentHP} / ${this.fullHP}`
   },
   renderHPProgressBar: function() {
     this.elProgressBar.style.width = `${(this.currentHP/this.fullHP) * 100}%`
+  },
+  renderButtonText: function() {
+    for (const key in this.abilityBtn) {
+      if (this.abilityBtn.hasOwnProperty(key)) {
+        this.abilityBtn[key].innerText = `[ ${this.ability[key].currentUse} / ${this.ability[key].maxUse}] ${this.ability[key].name}`;
+      }
+    }
   },
   changeHP: function(attackPower, targetPokemon) {
     targetPokemon.currentHP -= attackPower;
@@ -27,7 +35,6 @@ const POKEMON = {
     for (let key in this.ability) {
       if (key === action) {
         const attackPower = random(this.ability[key].power)
-        
         this.changeHP(attackPower, targetPokemon);
         console.log(generateLog(this, targetPokemon, attackPower, key));
         return
@@ -60,22 +67,26 @@ const PIKACHU = {
     thundershock: {
       name: 'Удар грома',
       power: 7,
-      count: 99,
+      currentUse: 0,
+      maxUse: 99,
     },
     quickAttack: {
       name: 'Быстрая атака',
       power: 10,
-      count: 5,
+      currentUse: 0,
+      maxUse: 5,
     },
     slam: {
       name: 'Хлопок',
       power: 2,
-      count: 4,
+      currentUse: 0,
+      maxUse: 4,
     },
     thunderbolt: {
       name: 'Удар молнии',
       power: 1000,
-      count: 3,
+      currentUse: 0,
+      maxUse: 3,
     }
   },
 }
@@ -97,22 +108,26 @@ const CHARMANDER = {
     scratch: {
       name: 'Царапка',
       power: 10,
-      count: 99,
+      currentUse: 0,
+      maxUse: 99,
     },
     ember: {
       name: 'Тлеющие угли',
       power: 5,
-      count: 5,
+      currentUse: 0,
+      maxUse: 5,
     },
     fireFang: {
       name: 'Огненный клык',
       power: 11,
-      count: 2,
+      currentUse: 0,
+      maxUse: 2,
     },
     flameBurst: {
       name: 'Взрыв пламени',
       power: 1000,
-      count: 3,
+      currentUse: 0,
+      maxUse: 1,
     }
   },
 }
@@ -197,12 +212,13 @@ function clickCounter() {
   let count = 0;
 
   return function(attackerPokemon, targetPokemon, action) {
-    const abilityCount = attackerPokemon.ability[action].count
 
     attackerPokemon.attack(action, targetPokemon);
-    console.log(`${++count} / ${abilityCount}`);
-
-    abilityCount <= count ? attackerPokemon.abilityBtn[action].disabled = true : '';
+    attackerPokemon.ability[action].currentUse = ++count
+    attackerPokemon.renderButtonText();
+    console.log(`${attackerPokemon.ability[action].currentUse} / ${attackerPokemon.ability[action].maxUse}`);
+    
+    attackerPokemon.ability[action].maxUse <= count ? attackerPokemon.abilityBtn[action].disabled = true : '';
   }
 }
 // You Pokemon

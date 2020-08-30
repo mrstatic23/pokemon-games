@@ -278,7 +278,8 @@ body {
     outline: none !important;
     cursor: pointer;
     font-size: 18px;
-    width: 160px;
+    width: 250px;
+    text-align: left;
 }
 .button:after {
     content: "";
