@@ -1,6 +1,54 @@
 'use strict'
 
+const POKEMON = {
+  renderHP: function() {
+    this.renderHPLife();
+    this.renderHPProgressBar();
+  },
+  renderHPLife: function() {
+    this.elHP.innerText = `${this.currentHP} / ${this.fullHP}`
+  },
+  renderHPProgressBar: function() {
+    this.elProgressBar.style.width = `${(this.currentHP/this.fullHP) * 100}%`
+  },
+  changeHP: function(attackPower, targetPokemon) {
+    targetPokemon.currentHP -= attackPower;
+    
+    if (targetPokemon.currentHP <= 0) {
+      targetPokemon.currentHP = 0;
+      
+      alert(`Покемон ${targetPokemon.name} проиграл бой!`);
+      youPokemon.endGame();
+      enemyPokemon.endGame();
+    }
+    targetPokemon.renderHP();
+  },
+  attack: function(action, targetPokemon) {
+    for (let key in this.ability) {
+      if (key === action) {
+        const attackPower = random(this.ability[key].power)
+          
+        this.changeHP(attackPower, targetPokemon);
+        console.log(generateLog(this, targetPokemon, attackPower, key));
+        return
+        }
+      }
+    },
+  endGame: function() {
+    const $controlButton = this.abilityBtn.querySelectorAll('.button');
+  
+    for (const key in $controlButton) {
+      if ($controlButton[key].className) {
+        $controlButton[key].disabled = true;
+      }
+    }
+  },
+};
+
+
+
 const PIKACHU = {
+  __proto__: POKEMON,
   name: 'Pikachu',
   fullHP: 150,
   currentHP: 150,
@@ -25,15 +73,10 @@ const PIKACHU = {
       power: 40
     }
   },
-  renderHP,
-  renderHPLife,
-  renderHPProgressBar,
-  changeHP,
-  attack,
-  endGame
 }
 
 const CHARMANDER = {
+  __proto__: POKEMON,
   name: 'Charmander',
   fullHP: 200,
   currentHP: 200,
@@ -58,29 +101,22 @@ const CHARMANDER = {
       power: 3
     }
   },
-  renderHP,
-  renderHPLife,
-  renderHPProgressBar,
-  changeHP,
-  attack,
-  endGame
 }
 
 const youPokemon = PIKACHU;
 const enemyPokemon = CHARMANDER;
 
-function attack(action, targetPokemon) {
-  for (let key in this.ability) {
-    if (key === action) {
-      const attackPower = random(this.ability[key].power)
+// function attack(action, targetPokemon) {
+//   for (let key in this.ability) {
+//     if (key === action) {
+//       const attackPower = random(this.ability[key].power)
       
-      changeHP(attackPower, targetPokemon);
-      console.log(generateLog(this, targetPokemon, attackPower, key));
-      return
-    }
-  }
-}
-
+//       changeHP(attackPower, targetPokemon);
+//       console.log(generateLog(this, targetPokemon, attackPower, key));
+//       return
+//     }
+//   }
+// }
 
 function generateLog(attackerPokemon, targetPokemon, attackPower, abilityId) {
   let logsArr;
@@ -90,8 +126,7 @@ function generateLog(attackerPokemon, targetPokemon, attackPower, abilityId) {
   const $logs = document.querySelector('#logs');
   
   const missLog = `О нет! ${attackerPokemon.name} промахнулся.`
-  
-  
+    
   switch (abilityId) {
     case 'thundershock':
       logsArr = [
@@ -148,47 +183,46 @@ function generateLog(attackerPokemon, targetPokemon, attackPower, abilityId) {
   $p.innerText = res;
   
   $logs.insertBefore($p, $logs.firstElementChild);
-  
-  
+    
   return res
 }
 
-function renderHP() {
-  this.renderHPLife();
-  this.renderHPProgressBar();
-}
+// function renderHP() {
+//   this.renderHPLife();
+//   this.renderHPProgressBar();
+// }
 
-function renderHPLife() {
-  this.elHP.innerText = `${this.currentHP} / ${this.fullHP}`
-}
+// function renderHPLife() {
+//   this.elHP.innerText = `${this.currentHP} / ${this.fullHP}`
+// }
 
-function renderHPProgressBar() {
-  this.elProgressBar.style.width = `${(this.currentHP/this.fullHP) * 100}%`
-}
+// function renderHPProgressBar() {
+//   this.elProgressBar.style.width = `${(this.currentHP/this.fullHP) * 100}%`
+// }
 
-function changeHP(attackPower, targetPokemon) {
-  targetPokemon.currentHP -= attackPower;
+// function changeHP(attackPower, targetPokemon) {
+//   targetPokemon.currentHP -= attackPower;
   
-  if (targetPokemon.currentHP <= 0) {
-    targetPokemon.currentHP = 0;
+//   if (targetPokemon.currentHP <= 0) {
+//     targetPokemon.currentHP = 0;
     
-    alert(`Покемон ${targetPokemon.name} проиграл бой!`);
-    youPokemon.endGame();
-    enemyPokemon.endGame();
-  }
+//     alert(`Покемон ${targetPokemon.name} проиграл бой!`);
+//     youPokemon.endGame();
+//     enemyPokemon.endGame();
+// //   }
   
-  targetPokemon.renderHP();
-}
+//   targetPokemon.renderHP();
+// }
 
-function endGame() {
-  const $controlButton = this.abilityBtn.querySelectorAll('.button');
+// function endGame() {
+//   const $controlButton = this.abilityBtn.querySelectorAll('.button');
   
-  for (const key in $controlButton) {
-    if ($controlButton[key].className) {
-      $controlButton[key].disabled = true;
-    }
-  }
-}
+//   for (const key in $controlButton) {
+//     if ($controlButton[key].className) {
+//       $controlButton[key].disabled = true;
+//     }
+//   }
+// }
 
 function random(power) {
   return Math.floor(Math.random() * power);
