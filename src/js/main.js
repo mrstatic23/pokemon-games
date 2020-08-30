@@ -45,8 +45,6 @@ const POKEMON = {
   },
 };
 
-
-
 const PIKACHU = {
   __proto__: POKEMON,
   name: 'Pikachu',
