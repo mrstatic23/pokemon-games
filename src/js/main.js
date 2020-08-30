@@ -255,4 +255,17 @@ function init() {
   enemyPokemon.renderHP();
 }
 
+// TODO: Save for future
+// youPokemon.abilityBtn.addEventListener('click', function(e) {
+//   const action = e.target.id;
+  
+//   youPokemon.attack(action, enemyPokemon);
+// });
+
+// enemyPokemon.abilityBtn.addEventListener('click', function(e) {
+//   const action = e.target.id;
+  
+//   enemyPokemon.attack(action, youPokemon);
+// });
+
 init()
