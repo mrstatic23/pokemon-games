@@ -1,216 +1,287 @@
 'use strict';
 
-const PIKACHU = {
-    name: 'Pikachu',
-    fullHP: 150,
-    currentHP: 150,
-    elHP: document.getElementById('health-character'),
-    elProgressBar: document.getElementById('progressbar-character'),
-    abilityBtn: document.getElementById('character-attack'),
-    ability: {
-        thundershock: {
-            name: 'Удар грома',
-            power: 7,
-        },
-        quickAttack: {
-            name: 'Быстрая атака',
-            power: 10
-        },
-        slam: {
-            name: 'Хлопок',
-            power: 2
-        },
-        thunderbolt: {
-            name: 'Удар молнии',
-            power: 40
+const POKEMON = {
+  renderHP: function() {
+    this.renderHPLife();
+    this.renderHPProgressBar();
+    this.renderButtonText();
+  },
+  renderHPLife: function() {
+    this.elHP.innerText = `${this.currentHP} / ${this.fullHP}`
+  },
+  renderHPProgressBar: function() {
+    this.elProgressBar.style.width = `${(this.currentHP/this.fullHP) * 100}%`
+  },
+  renderButtonText: function() {
+    for (const key in this.abilityBtn) {
+      if (this.abilityBtn.hasOwnProperty(key)) {
+        this.abilityBtn[key].innerText = `[ ${this.ability[key].currentUse} / ${this.ability[key].maxUse}] ${this.ability[key].name}`;
+      }
+    }
+  },
+  changeHP: function(attackPower, targetPokemon) {
+    targetPokemon.currentHP -= attackPower;
+
+    if (targetPokemon.currentHP <= 0) {
+      targetPokemon.currentHP = 0;
+      
+      alert(`Покемон ${targetPokemon.name} проиграл бой!`);
+      this.endGame();
+      targetPokemon.endGame();
+    }
+    targetPokemon.renderHP();
+  },
+  attack: function(action, targetPokemon) {
+    for (let key in this.ability) {
+      if (key === action) {
+        const attackPower = random(this.ability[key].power)
+        this.changeHP(attackPower, targetPokemon);
+        console.log(generateLog(this, targetPokemon, attackPower, key));
+        return
         }
+      }
     },
-    
-    renderHP,
-    renderHPLife,
-    renderHPProgressBar,
-    changeHP,
-    attack,
-    endGame
+  endGame: function() {
+    for (const key in this.abilityBtn) {
+      if (this.abilityBtn.hasOwnProperty(key)) {
+        this.abilityBtn[key].disabled = true;
+      }
+    }
+  },
+};
+
+const PIKACHU = {
+  __proto__: POKEMON,
+  name: 'Pikachu',
+  fullHP: 150,
+  currentHP: 150,
+  elHP: document.getElementById('health-character'),
+  elProgressBar: document.getElementById('progressbar-character'),
+  abilityBtn: {
+    thundershock: document.getElementById('thundershock'),
+    quickAttack: document.getElementById('quickAttack'),
+    slam: document.getElementById('slam'),
+    thunderbolt: document.getElementById('thunderbolt'),
+  },
+  ability: {
+    thundershock: {
+      name: 'Удар грома',
+      power: 7,
+      currentUse: 0,
+      maxUse: 99,
+    },
+    quickAttack: {
+      name: 'Быстрая атака',
+      power: 10,
+      currentUse: 0,
+      maxUse: 5,
+    },
+    slam: {
+      name: 'Хлопок',
+      power: 2,
+      currentUse: 0,
+      maxUse: 4,
+    },
+    thunderbolt: {
+      name: 'Удар молнии',
+      power: 1000,
+      currentUse: 0,
+      maxUse: 3,
+    }
+  },
 }
 
 const CHARMANDER = {
-    name: 'Charmander',
-    fullHP: 200,
-    currentHP: 200,
-    elHP: document.getElementById('health-enemy'),
-    elProgressBar: document.getElementById('progressbar-enemy'),
-    abilityBtn: document.getElementById('enemy-attack'),
-    ability: {
-        scratch: {
-            name: 'Царапка',
-            power: 10
-        },
-        ember: {
-            name: 'Тлеющие угли',
-            power: 5
-        },
-        fireFang: {
-            name: 'Огненный клык',
-            power: 11
-        },
-        flameBurst: {
-            name: 'Взрыв пламени',
-            power: 3
-        }
+  __proto__: POKEMON,
+  name: 'Charmander',
+  fullHP: 200,
+  currentHP: 200,
+  elHP: document.getElementById('health-enemy'),
+  elProgressBar: document.getElementById('progressbar-enemy'),
+  abilityBtn: {
+    scratch: document.getElementById('scratch'),
+    ember: document.getElementById('ember'),
+    fireFang: document.getElementById('fireFang'),
+    flameBurst: document.getElementById('flameBurst'),
+  },
+  ability: {
+    scratch: {
+      name: 'Царапка',
+      power: 10,
+      currentUse: 0,
+      maxUse: 99,
     },
-
-    renderHP,
-    renderHPLife,
-    renderHPProgressBar,
-    changeHP,
-    attack,
-    endGame
-};
+    ember: {
+      name: 'Тлеющие угли',
+      power: 5,
+      currentUse: 0,
+      maxUse: 5,
+    },
+    fireFang: {
+      name: 'Огненный клык',
+      power: 11,
+      currentUse: 0,
+      maxUse: 2,
+    },
+    flameBurst: {
+      name: 'Взрыв пламени',
+      power: 1000,
+      currentUse: 0,
+      maxUse: 1,
+    }
+  },
+}
 
 const youPokemon = PIKACHU;
 const enemyPokemon = CHARMANDER;
 
-function attack(action, targetPokemon) {
-    for (let key in this.ability) {
-        if (key == action) {
-            const attackPower = random(this.ability[key].power)
-
-            changeHP(attackPower, targetPokemon);
-            console.log(generateLog(this, targetPokemon, attackPower, key));
-            return
-        }
-    }
-}
-
 function generateLog(attackerPokemon, targetPokemon, attackPower, abilityId) {
-    let logsArr;
-    let res;
-
-    const $p = document.createElement('p');
-    const $logs = document.querySelector('#logs');
-
-    const missLog = `О нет! ${attackerPokemon.name} промахнулся.`
+  let logsArr;
+  let res;
+  
+  const $p = document.createElement('p');
+  const $logs = document.querySelector('#logs');
+  
+  const missLog = `О нет! ${attackerPokemon.name} промахнулся.`
     
-
-    switch (abilityId) {
-        case 'thundershock':
-            logsArr = [
-                `${attackerPokemon.name} заряжает свои щечки и атакует ${targetPokemon.name} на ${attackPower}.`,
-                `Пока ${targetPokemon.name} отвлекся, ${attackerPokemon.name} накопил заряд и нанес электрический удар силой ${attackPower}.`
-            ];
-            break;
-        case 'quickAttack':
-            logsArr = [
-                `${attackerPokemon.name} молниеносно атакует ${targetPokemon.name} на ${attackPower}.`,
-                `${attackerPokemon.name} очень быстро бьет своими лапками ${targetPokemon.name} нанося ему ${attackPower} урона.`,
-            ];
-            break;
-        case 'slam':
-            logsArr = [
-                `${attackerPokemon.name} неожиданно толкает ${targetPokemon.name} плечом, чем наносит ему ${attackPower} урона.`,
-                `${attackerPokemon.name} наносит ${attackPower} урона ${targetPokemon.name} ударив его хвостом.`
-            ];
-            break;
-        case 'thunderbolt':
-            logsArr = [
-                `${attackerPokemon.name} наносит невероятно мощную электрическую атаку ${targetPokemon.name}. ${targetPokemon.name} получил ${attackPower} урона.`,
-                `${attackerPokemon.name} ударяет молнией ${targetPokemon.name} и наносит ему ${attackPower} урона.`
-            ];
-            break;
-        case 'scratch':
-            logsArr = [
-                `${attackerPokemon.name} царапет своими острыми когтями ${targetPokemon.name}. ${targetPokemon.name} получил ${attackPower} урона.`,
-                `Острые когти ${attackerPokemon.name} царапают ${targetPokemon.name} на ${attackPower} урона.`,
-            ];
-            break;
-        case 'ember':
-            logsArr = [
-                `${attackerPokemon.name} поражает маленькими огоньками ${targetPokemon.name}. ${targetPokemon.name} получил ${attackPower} урона.`,
-                `Огоньки ${attackerPokemon.name} поражают ${targetPokemon.name} на ${attackPower} урона.`,
-            ];
-            break;
-        case 'fireFang':
-            logsArr = [
-                `${attackerPokemon.name} кусает раскаленными зубами ${targetPokemon.name}. ${targetPokemon.name} получил ${attackPower} урона.`,
-                `Расскаленные до бела зубы ${attackerPokemon.name} впиваются бедного ${targetPokemon.name} и наносят ему ${attackPower} урона.`,
-            ];
-            break;
-        case 'flameBurst':
-            logsArr = [
-                `${attackerPokemon.name} поражает ${targetPokemon.name} огненным взрывом. ${targetPokemon.name} получил ${attackPower} урона.`,
-                `Огненный взрыв ${attackerPokemon.name} поражает ${targetPokemon.name} и наносят ему ${attackPower} урона.`,
-            ];
-            break;
-    }
-
-    res = attackPower === 0 ? missLog : `${logsArr[((Math.ceil(Math.random() * 2)) - 1)]} ${attackerPokemon.name} [${attackerPokemon.currentHP} / ${attackerPokemon.fullHP}], ${targetPokemon.name} [${targetPokemon.currentHP} / ${targetPokemon.fullHP}]`;
-
-    $p.innerText = res;
+  switch (abilityId) {
+    case 'thundershock':
+      logsArr = [
+        `${attackerPokemon.name} заряжает свои щечки и атакует ${targetPokemon.name} на ${attackPower}.`,
+        `Пока ${targetPokemon.name} отвлекся, ${attackerPokemon.name} накопил заряд и нанес электрический удар силой ${attackPower}.`
+      ];
+      break;
+    case 'quickAttack':
+      logsArr = [
+        `${attackerPokemon.name} молниеносно атакует ${targetPokemon.name} на ${attackPower}.`,
+        `${attackerPokemon.name} очень быстро бьет своими лапками ${targetPokemon.name} нанося ему ${attackPower} урона.`,
+      ];
+      break;
+    case 'slam':
+      logsArr = [
+        `${attackerPokemon.name} неожиданно толкает ${targetPokemon.name} плечом, чем наносит ему ${attackPower} урона.`,
+        `${attackerPokemon.name} наносит ${attackPower} урона ${targetPokemon.name} ударив его хвостом.`
+      ];
+      break;
+    case 'thunderbolt':
+      logsArr = [
+        `${attackerPokemon.name} наносит невероятно мощную электрическую атаку ${targetPokemon.name}. ${targetPokemon.name} получил ${attackPower} урона.`,
+        `${attackerPokemon.name} ударяет молнией ${targetPokemon.name} и наносит ему ${attackPower} урона.`
+      ];
+      break;
+    case 'scratch':
+      logsArr = [
+        `${attackerPokemon.name} царапает своими острыми когтями ${targetPokemon.name}. ${targetPokemon.name} получил ${attackPower} урона.`,
+        `Острые когти ${attackerPokemon.name} царапают ${targetPokemon.name} на ${attackPower} урона.`,
+      ];
+      break;
+    case 'ember':
+      logsArr = [
+        `${attackerPokemon.name} поражает маленькими огоньками ${targetPokemon.name}. ${targetPokemon.name} получил ${attackPower} урона.`,
+        `Огоньки ${attackerPokemon.name} поражают ${targetPokemon.name} на ${attackPower} урона.`,
+      ];
+      break;
+    case 'fireFang':
+      logsArr = [
+        `${attackerPokemon.name} кусает раскаленными зубами ${targetPokemon.name}. ${targetPokemon.name} получил ${attackPower} урона.`,
+        `Раскаленные до бела зубы ${attackerPokemon.name} впиваются бедного ${targetPokemon.name} и наносят ему ${attackPower} урона.`,
+      ];
+      break;
+    case 'flameBurst':
+      logsArr = [
+        `${attackerPokemon.name} поражает ${targetPokemon.name} огненным взрывом. ${targetPokemon.name} получил ${attackPower} урона.`,
+        `Огненный взрыв ${attackerPokemon.name} поражает ${targetPokemon.name} и наносят ему ${attackPower} урона.`,
+      ];
+      break;
+  }
+  
+  res = attackPower === 0 ? missLog : `${logsArr[((Math.ceil(Math.random() * 2)) - 1)]} ${attackerPokemon.name} [${attackerPokemon.currentHP} / ${attackerPokemon.fullHP}], ${targetPokemon.name} [${targetPokemon.currentHP} / ${targetPokemon.fullHP}]`;
+  
+  $p.innerText = res;
+  
+  $logs.insertBefore($p, $logs.firstElementChild);
     
-    $logs.insertBefore($p, $logs.firstElementChild);
-
-
-    return res
-}
-
-function renderHP() {
-    this.renderHPLife();
-    this.renderHPProgressBar();
-}
-
-function renderHPLife() {
-    this.elHP.innerText = `${this.currentHP} / ${this.fullHP}`
-}
-
-function renderHPProgressBar() {
-    this.elProgressBar.style.width = `${(this.currentHP/this.fullHP) * 100}%`
-}
-
-function changeHP(attackPower, targetPokemon) {
-    targetPokemon.currentHP -= attackPower;
-
-    if (targetPokemon.currentHP <= 0) {
-        targetPokemon.currentHP = 0;
-
-        alert(`Покемон ${targetPokemon.name} проиграл бой!`);
-        youPokemon.endGame();
-        enemyPokemon.endGame();
-    }
-
-    targetPokemon.renderHP();
-}
-
-function endGame() {
-    const $controlButton = this.abilityBtn.querySelectorAll('.button');
-    
-    for (const key in $controlButton) {
-        if ($controlButton[key].className) {
-            $controlButton[key].disabled = true;
-        }
-    }
+  return res
 }
 
 function random(power) {
-    return Math.floor(Math.random() * power);
+  return Math.floor(Math.random() * power);
 }
+
+function clickCounter() {
+  let count = 0;
+
+  return function(attackerPokemon, targetPokemon, action) {
+
+    attackerPokemon.attack(action, targetPokemon);
+    attackerPokemon.ability[action].currentUse = ++count
+    attackerPokemon.renderButtonText();
+    console.log(`${attackerPokemon.ability[action].currentUse} / ${attackerPokemon.ability[action].maxUse}`);
+    
+    attackerPokemon.ability[action].maxUse <= count ? attackerPokemon.abilityBtn[action].disabled = true : '';
+  }
+}
+// You Pokemon
+const thundershockClick = clickCounter();
+const quickAttackClick = clickCounter();
+const slamClick = clickCounter();
+const thunderboltClick = clickCounter();
+// Enemy Pokemon
+const scratchClick = clickCounter();
+const emberClick = clickCounter();
+const fireFangClick = clickCounter();
+const flameBurstClick = clickCounter();
+
+
+youPokemon.abilityBtn.thundershock.addEventListener('click', function() {
+  thundershockClick(youPokemon, enemyPokemon, 'thundershock');
+});
+
+youPokemon.abilityBtn.quickAttack.addEventListener('click', function() {
+  quickAttackClick(youPokemon, enemyPokemon,'quickAttack');
+});
+
+youPokemon.abilityBtn.slam.addEventListener('click', function() {
+  slamClick(youPokemon, enemyPokemon,'slam');
+});
+
+youPokemon.abilityBtn.thunderbolt.addEventListener('click', function() {
+  thunderboltClick(youPokemon, enemyPokemon,'thunderbolt');
+});
+
+enemyPokemon.abilityBtn.scratch.addEventListener('click', function() {
+  scratchClick(enemyPokemon, youPokemon, 'scratch');
+});
+
+enemyPokemon.abilityBtn.ember.addEventListener('click', function() {
+  emberClick(enemyPokemon, youPokemon,'ember');
+});
+
+enemyPokemon.abilityBtn.fireFang.addEventListener('click', function() {
+  fireFangClick(enemyPokemon, youPokemon,'fireFang');
+});
+
+enemyPokemon.abilityBtn.flameBurst.addEventListener('click', function() {
+  flameBurstClick(enemyPokemon, youPokemon,'flameBurst');
+});
 
 function init() {
-    console.log('Start Game!!!');
-    youPokemon.renderHP();
-    enemyPokemon.renderHP();
+  console.log('Start Game!!!');
+  youPokemon.renderHP();
+  enemyPokemon.renderHP();
 }
 
-youPokemon.abilityBtn.addEventListener('click', function(e) {
-    const action = e.target.id;
+// TODO: Save for future
+// youPokemon.abilityBtn.addEventListener('click', function(e) {
+//   const action = e.target.id;
+  
+//   youPokemon.attack(action, enemyPokemon);
+// });
 
-    youPokemon.attack(action, enemyPokemon);
-});
+// enemyPokemon.abilityBtn.addEventListener('click', function(e) {
+//   const action = e.target.id;
+  
+//   enemyPokemon.attack(action, youPokemon);
+// });
 
-enemyPokemon.abilityBtn.addEventListener('click', function(e) {
-    const action = e.target.id;
-
-    enemyPokemon.attack(action, youPokemon);
-});
-
-init();
+init()
