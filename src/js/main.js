@@ -218,7 +218,9 @@ function clickCounter() {
     attackerPokemon.renderButtonText();
     console.log(`${attackerPokemon.ability[action].currentUse} / ${attackerPokemon.ability[action].maxUse}`);
     
-    attackerPokemon.ability[action].maxUse <= count ? attackerPokemon.abilityBtn[action].disabled = true : '';
+    if (attackerPokemon.ability[action].maxUse <= count) {
+      attackerPokemon.abilityBtn[action].disabled = true
+    }
   }
 }
 // You Pokemon
