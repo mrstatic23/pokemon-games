@@ -2,19 +2,21 @@ class Selectors {
     constructor(name) {
         this.elHP = document.getElementById(`health-${name}`);
         this.elProgressBar = document.getElementById(`progressbar-${name}`);
+        this.elImg = document.getElementById(`img-${name}`);
     }
 }
 
 export default class Pokemon extends Selectors {
 
-    constructor({ name, type, hp, selectors, ability }) {
+    constructor({ name, type, hp, selectors, attacks, img}) {
       super(selectors);
 
       this.name = name;
       this.type = type;
       this.fullHP = hp;
       this.currentHP = hp;
-      this.ability = ability;
+      this.attacks = attacks;
+      this.img = img
 
       this.renderHP();
   };
@@ -22,24 +24,27 @@ export default class Pokemon extends Selectors {
   renderHP = () => {
     this.renderHPLife();
     this.renderHPProgressBar();
-    this.renderButtonText();
+    this.renderPokemonImage();
   };
 
   renderHPLife = () => {
     this.elHP.innerText = `${this.currentHP} / ${this.fullHP}`
   };
 
-  renderHPProgressBar = () => {
-    this.elProgressBar.style.width = `${(this.currentHP/this.fullHP) * 100}%`
-  };
-
-  renderButtonText = () => {
-    for (const key in this.ability) {
-      if (this.ability.hasOwnProperty(key)) {
-        this.ability[key].btn.innerText = `[ ${this.ability[key].currentUse} / ${this.ability[key].maxUse}] ${this.ability[key].name}`;
-      }
+  renderHPProgressBar = () => { 
+    const healthBar = (this.currentHP/this.fullHP) * 100;
+    this.elProgressBar.style.width = `${healthBar}%`
+    if (healthBar < 60 && healthBar > 20) {
+      this.elProgressBar.classList.add("low");
+    } else if (healthBar < 20) {
+      this.elProgressBar.classList.remove("low");
+      this.elProgressBar.classList.add("critical");
     }
   };
+
+  renderPokemonImage= () => {
+    this.elImg.src = this.img
+  }
 
   changeHP = (attackPower, targetPokemon) => {
     targetPokemon.currentHP -= attackPower;
@@ -55,28 +60,26 @@ export default class Pokemon extends Selectors {
   }; 
 
   attack = (action, targetPokemon) => {
-    for (let key in this.ability) {
-      if (key === action) {
-        const attackPower = this.random(this.ability[key].power)
-        this.changeHP(attackPower, targetPokemon);
-        console.log(this.generateLog(this, targetPokemon, attackPower, key));
-        return
-        }
-      }
+    const attackPower = this.attackRandom(action.minDamage, action.maxDamage);
+    this.changeHP(attackPower, targetPokemon);
+    this.generateLog(this, targetPokemon, attackPower, action.name)
     };
 
-  endGame = () => {
-    for (const key in this.ability) {
-      if (this.ability.hasOwnProperty(key)) {
-        this.ability[key].btn.disabled = true;
-      }
-    }
-  };
-
-  random = (power) => {
-    return Math.floor(Math.random() * power);
+  attackRandom = (minDmg, maxDmg) => {
+    return Math.floor(Math.random() * (maxDmg - minDmg + 1) ) + minDmg;
   }
-
+    
+  endGame = () => {
+    // for (const key in this.ability) {
+    //   if (this.ability.hasOwnProperty(key)) {
+    //     this.ability[key].btn.disabled = true;
+    //   }
+    // }
+    // this.attacks.forEach(item => {
+    //   console.log($btn);
+    // })
+  };
+ 
   generateLog = (attackerPokemon, targetPokemon, attackPower, abilityId) => {
     let logsArr;
     let res;
@@ -87,31 +90,31 @@ export default class Pokemon extends Selectors {
     const missLog = `О нет! ${attackerPokemon.name} промахнулся.`
       
     switch (abilityId) {
-      case 'thundershock':
+      case 'thunder jolt':
         logsArr = [
           `${attackerPokemon.name} заряжает свои щечки и атакует ${targetPokemon.name} на ${attackPower}.`,
           `Пока ${targetPokemon.name} отвлекся, ${attackerPokemon.name} накопил заряд и нанес электрический удар силой ${attackPower}.`
         ];
         break;
-      case 'quickAttack':
+      case 'electro ball':
         logsArr = [
           `${attackerPokemon.name} молниеносно атакует ${targetPokemon.name} на ${attackPower}.`,
           `${attackerPokemon.name} очень быстро бьет своими лапками ${targetPokemon.name} нанося ему ${attackPower} урона.`,
         ];
         break;
-      case 'slam':
+      case 'volt tackle':
         logsArr = [
           `${attackerPokemon.name} неожиданно толкает ${targetPokemon.name} плечом, чем наносит ему ${attackPower} урона.`,
           `${attackerPokemon.name} наносит ${attackPower} урона ${targetPokemon.name} ударив его хвостом.`
         ];
         break;
-      case 'thunderbolt':
+      case 'thunder crack':
         logsArr = [
           `${attackerPokemon.name} наносит невероятно мощную электрическую атаку ${targetPokemon.name}. ${targetPokemon.name} получил ${attackPower} урона.`,
           `${attackerPokemon.name} ударяет молнией ${targetPokemon.name} и наносит ему ${attackPower} урона.`
         ];
         break;
-      case 'scratch':
+      case 'flamethrower':
         logsArr = [
           `${attackerPokemon.name} царапает своими острыми когтями ${targetPokemon.name}. ${targetPokemon.name} получил ${attackPower} урона.`,
           `Острые когти ${attackerPokemon.name} царапают ${targetPokemon.name} на ${attackPower} урона.`,
@@ -123,13 +126,13 @@ export default class Pokemon extends Selectors {
           `Огоньки ${attackerPokemon.name} поражают ${targetPokemon.name} на ${attackPower} урона.`,
         ];
         break;
-      case 'fireFang':
+      case 'burning tail':
         logsArr = [
           `${attackerPokemon.name} кусает раскаленными зубами ${targetPokemon.name}. ${targetPokemon.name} получил ${attackPower} урона.`,
           `Раскаленные до бела зубы ${attackerPokemon.name} впиваются бедного ${targetPokemon.name} и наносят ему ${attackPower} урона.`,
         ];
         break;
-      case 'flameBurst':
+      case 'fire spin':
         logsArr = [
           `${attackerPokemon.name} поражает ${targetPokemon.name} огненным взрывом. ${targetPokemon.name} получил ${attackPower} урона.`,
           `Огненный взрыв ${attackerPokemon.name} поражает ${targetPokemon.name} и наносят ему ${attackPower} урона.`,
