@@ -1,212 +1,79 @@
 'use strict';
+import Pokemon from './pokemon.js';
 
-const POKEMON = {
-  renderHP: function() {
-    this.renderHPLife();
-    this.renderHPProgressBar();
-    this.renderButtonText();
-  },
-  renderHPLife: function() {
-    this.elHP.innerText = `${this.currentHP} / ${this.fullHP}`
-  },
-  renderHPProgressBar: function() {
-    this.elProgressBar.style.width = `${(this.currentHP/this.fullHP) * 100}%`
-  },
-  renderButtonText: function() {
-    for (const key in this.abilityBtn) {
-      if (this.abilityBtn.hasOwnProperty(key)) {
-        this.abilityBtn[key].innerText = `[ ${this.ability[key].currentUse} / ${this.ability[key].maxUse}] ${this.ability[key].name}`;
-      }
-    }
-  },
-  changeHP: function(attackPower, targetPokemon) {
-    targetPokemon.currentHP -= attackPower;
-
-    if (targetPokemon.currentHP <= 0) {
-      targetPokemon.currentHP = 0;
-      
-      alert(`Покемон ${targetPokemon.name} проиграл бой!`);
-      this.endGame();
-      targetPokemon.endGame();
-    }
-    targetPokemon.renderHP();
-  },
-  attack: function(action, targetPokemon) {
-    for (let key in this.ability) {
-      if (key === action) {
-        const attackPower = random(this.ability[key].power)
-        this.changeHP(attackPower, targetPokemon);
-        console.log(generateLog(this, targetPokemon, attackPower, key));
-        return
-        }
-      }
-    },
-  endGame: function() {
-    for (const key in this.abilityBtn) {
-      if (this.abilityBtn.hasOwnProperty(key)) {
-        this.abilityBtn[key].disabled = true;
-      }
-    }
-  },
-};
-
-const PIKACHU = {
-  __proto__: POKEMON,
+const player1 = new Pokemon({
   name: 'Pikachu',
-  fullHP: 150,
-  currentHP: 150,
-  elHP: document.getElementById('health-character'),
-  elProgressBar: document.getElementById('progressbar-character'),
-  abilityBtn: {
-    thundershock: document.getElementById('thundershock'),
-    quickAttack: document.getElementById('quickAttack'),
-    slam: document.getElementById('slam'),
-    thunderbolt: document.getElementById('thunderbolt'),
-  },
+  type: 'electric',
+  hp: 150,
+  selectors: 'character',
   ability: {
     thundershock: {
       name: 'Удар грома',
       power: 7,
       currentUse: 0,
       maxUse: 99,
+      btn: document.getElementById('thundershock'),
     },
     quickAttack: {
       name: 'Быстрая атака',
       power: 10,
       currentUse: 0,
       maxUse: 5,
+      btn: document.getElementById('quickAttack'),
     },
     slam: {
       name: 'Хлопок',
       power: 2,
       currentUse: 0,
       maxUse: 4,
+      btn: document.getElementById('slam'),
     },
     thunderbolt: {
       name: 'Удар молнии',
       power: 1000,
       currentUse: 0,
       maxUse: 3,
-    }
-  },
-}
+      btn: document.getElementById('thunderbolt'),
+    },
+  }
+});
 
-const CHARMANDER = {
-  __proto__: POKEMON,
+const player2 = new Pokemon({
   name: 'Charmander',
-  fullHP: 200,
-  currentHP: 200,
-  elHP: document.getElementById('health-enemy'),
-  elProgressBar: document.getElementById('progressbar-enemy'),
-  abilityBtn: {
-    scratch: document.getElementById('scratch'),
-    ember: document.getElementById('ember'),
-    fireFang: document.getElementById('fireFang'),
-    flameBurst: document.getElementById('flameBurst'),
-  },
+  type: 'fire',
+  hp: 200,
+  selectors: 'enemy',
   ability: {
     scratch: {
       name: 'Царапка',
       power: 10,
       currentUse: 0,
       maxUse: 99,
+      btn: document.getElementById('scratch'),
     },
     ember: {
       name: 'Тлеющие угли',
       power: 5,
       currentUse: 0,
       maxUse: 5,
+      btn: document.getElementById('ember'),
     },
     fireFang: {
       name: 'Огненный клык',
       power: 11,
       currentUse: 0,
       maxUse: 2,
+      btn: document.getElementById('fireFang'),
     },
     flameBurst: {
       name: 'Взрыв пламени',
       power: 1000,
       currentUse: 0,
       maxUse: 1,
+      btn: document.getElementById('flameBurst'),
     }
   },
-}
-
-const youPokemon = PIKACHU;
-const enemyPokemon = CHARMANDER;
-
-function generateLog(attackerPokemon, targetPokemon, attackPower, abilityId) {
-  let logsArr;
-  let res;
-  
-  const $p = document.createElement('p');
-  const $logs = document.querySelector('#logs');
-  
-  const missLog = `О нет! ${attackerPokemon.name} промахнулся.`
-    
-  switch (abilityId) {
-    case 'thundershock':
-      logsArr = [
-        `${attackerPokemon.name} заряжает свои щечки и атакует ${targetPokemon.name} на ${attackPower}.`,
-        `Пока ${targetPokemon.name} отвлекся, ${attackerPokemon.name} накопил заряд и нанес электрический удар силой ${attackPower}.`
-      ];
-      break;
-    case 'quickAttack':
-      logsArr = [
-        `${attackerPokemon.name} молниеносно атакует ${targetPokemon.name} на ${attackPower}.`,
-        `${attackerPokemon.name} очень быстро бьет своими лапками ${targetPokemon.name} нанося ему ${attackPower} урона.`,
-      ];
-      break;
-    case 'slam':
-      logsArr = [
-        `${attackerPokemon.name} неожиданно толкает ${targetPokemon.name} плечом, чем наносит ему ${attackPower} урона.`,
-        `${attackerPokemon.name} наносит ${attackPower} урона ${targetPokemon.name} ударив его хвостом.`
-      ];
-      break;
-    case 'thunderbolt':
-      logsArr = [
-        `${attackerPokemon.name} наносит невероятно мощную электрическую атаку ${targetPokemon.name}. ${targetPokemon.name} получил ${attackPower} урона.`,
-        `${attackerPokemon.name} ударяет молнией ${targetPokemon.name} и наносит ему ${attackPower} урона.`
-      ];
-      break;
-    case 'scratch':
-      logsArr = [
-        `${attackerPokemon.name} царапает своими острыми когтями ${targetPokemon.name}. ${targetPokemon.name} получил ${attackPower} урона.`,
-        `Острые когти ${attackerPokemon.name} царапают ${targetPokemon.name} на ${attackPower} урона.`,
-      ];
-      break;
-    case 'ember':
-      logsArr = [
-        `${attackerPokemon.name} поражает маленькими огоньками ${targetPokemon.name}. ${targetPokemon.name} получил ${attackPower} урона.`,
-        `Огоньки ${attackerPokemon.name} поражают ${targetPokemon.name} на ${attackPower} урона.`,
-      ];
-      break;
-    case 'fireFang':
-      logsArr = [
-        `${attackerPokemon.name} кусает раскаленными зубами ${targetPokemon.name}. ${targetPokemon.name} получил ${attackPower} урона.`,
-        `Раскаленные до бела зубы ${attackerPokemon.name} впиваются бедного ${targetPokemon.name} и наносят ему ${attackPower} урона.`,
-      ];
-      break;
-    case 'flameBurst':
-      logsArr = [
-        `${attackerPokemon.name} поражает ${targetPokemon.name} огненным взрывом. ${targetPokemon.name} получил ${attackPower} урона.`,
-        `Огненный взрыв ${attackerPokemon.name} поражает ${targetPokemon.name} и наносят ему ${attackPower} урона.`,
-      ];
-      break;
-  }
-  
-  res = attackPower === 0 ? missLog : `${logsArr[((Math.ceil(Math.random() * 2)) - 1)]} ${attackerPokemon.name} [${attackerPokemon.currentHP} / ${attackerPokemon.fullHP}], ${targetPokemon.name} [${targetPokemon.currentHP} / ${targetPokemon.fullHP}]`;
-  
-  $p.innerText = res;
-  
-  $logs.insertBefore($p, $logs.firstElementChild);
-    
-  return res
-}
-
-function random(power) {
-  return Math.floor(Math.random() * power);
-}
+});
 
 function clickCounter() {
   let count = 0;
@@ -218,7 +85,9 @@ function clickCounter() {
     attackerPokemon.renderButtonText();
     console.log(`${attackerPokemon.ability[action].currentUse} / ${attackerPokemon.ability[action].maxUse}`);
     
-    attackerPokemon.ability[action].maxUse <= count ? attackerPokemon.abilityBtn[action].disabled = true : '';
+    if (attackerPokemon.ability[action].maxUse <= count) {
+      attackerPokemon.ability[action].btn.disabled = true
+    }
   }
 }
 // You Pokemon
@@ -232,44 +101,37 @@ const emberClick = clickCounter();
 const fireFangClick = clickCounter();
 const flameBurstClick = clickCounter();
 
-
-youPokemon.abilityBtn.thundershock.addEventListener('click', function() {
-  thundershockClick(youPokemon, enemyPokemon, 'thundershock');
+player1.ability.thundershock.btn.addEventListener('click', function() {
+    thundershockClick(player1, player2, 'thundershock');
 });
 
-youPokemon.abilityBtn.quickAttack.addEventListener('click', function() {
-  quickAttackClick(youPokemon, enemyPokemon,'quickAttack');
+player1.ability.quickAttack.btn.addEventListener('click', function() {
+  quickAttackClick(player1, player2, 'quickAttack');
 });
 
-youPokemon.abilityBtn.slam.addEventListener('click', function() {
-  slamClick(youPokemon, enemyPokemon,'slam');
+player1.ability.slam.btn.addEventListener('click', function() {
+  slamClick(player1, player2, 'slam');
 });
 
-youPokemon.abilityBtn.thunderbolt.addEventListener('click', function() {
-  thunderboltClick(youPokemon, enemyPokemon,'thunderbolt');
+player1.ability.thunderbolt.btn.addEventListener('click', function() {
+  thunderboltClick(player1, player2, 'thunderbolt');
 });
 
-enemyPokemon.abilityBtn.scratch.addEventListener('click', function() {
-  scratchClick(enemyPokemon, youPokemon, 'scratch');
+player2.ability.scratch.btn.addEventListener('click', function() {
+  scratchClick(player2, player1, 'scratch');
 });
 
-enemyPokemon.abilityBtn.ember.addEventListener('click', function() {
-  emberClick(enemyPokemon, youPokemon,'ember');
+player2.ability.ember.btn.addEventListener('click', function() {
+  emberClick(player2, player1, 'ember');
 });
 
-enemyPokemon.abilityBtn.fireFang.addEventListener('click', function() {
-  fireFangClick(enemyPokemon, youPokemon,'fireFang');
+player2.ability.fireFang.btn.addEventListener('click', function() {
+  fireFangClick(player2, player1, 'fireFang');
 });
 
-enemyPokemon.abilityBtn.flameBurst.addEventListener('click', function() {
-  flameBurstClick(enemyPokemon, youPokemon,'flameBurst');
+player2.ability.flameBurst.btn.addEventListener('click', function() {
+  flameBurstClick(player2, player1, 'flameBurst');
 });
-
-function init() {
-  console.log('Start Game!!!');
-  youPokemon.renderHP();
-  enemyPokemon.renderHP();
-}
 
 // TODO: Save for future
 // youPokemon.abilityBtn.addEventListener('click', function(e) {
@@ -283,5 +145,3 @@ function init() {
   
 //   enemyPokemon.attack(action, youPokemon);
 // });
-
-init()
