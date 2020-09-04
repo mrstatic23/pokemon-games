@@ -10,7 +10,7 @@ class Selectors {
 
 export default class Pokemon extends Selectors {
 
-    constructor({ name, type, hp, selectors, attacks, img}) {
+    constructor({ name, type, hp, selectors, attacks, img }) {
       super(selectors);
 
       this.name = name;
@@ -36,9 +36,10 @@ export default class Pokemon extends Selectors {
     this.elHP.innerText = `${this.currentHP} / ${this.fullHP}`
   };
 
-  renderHPProgressBar = () => { 
+  renderHPProgressBar = () => {
     const healthBar = (this.currentHP/this.fullHP) * 100;
     this.elProgressBar.style.width = `${healthBar}%`
+
     if (healthBar < 60 && healthBar > 20) {
       this.elProgressBar.classList.add("low");
     } else if (healthBar < 20) {
@@ -59,9 +60,8 @@ export default class Pokemon extends Selectors {
       
       alert(`Покемон ${targetPokemon.name} проиграл бой!`);
       this.endGame();
-      // targetPokemon.endGame();
-      // Game.startGame();
     }
+
     targetPokemon.renderHP();
   }; 
 

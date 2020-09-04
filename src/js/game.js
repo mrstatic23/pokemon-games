@@ -20,9 +20,6 @@ export default class Game {
         $playerControl.appendChild($playerControlHeader)
 
         player.elHealthBar.style.display = 'block';
-        // console.log(player.elHeathBar);
-        // console.log(player);
-
 
         player.attacks.forEach(item => {
             const $btn = document.createElement('button');
@@ -71,11 +68,4 @@ export default class Game {
         this.renderPokemonUI(this.player2, this.player1);
     }
 
-    restartGame = () => {
-
-    }
-
-    endGame = () => {
-        
-    }
 }
