@@ -5,6 +5,7 @@ class Selectors {
         this.elHP = document.getElementById(`health-${name}`);
         this.elProgressBar = document.getElementById(`progressbar-${name}`);
         this.elImg = document.getElementById(`img-${name}`);
+        this.elName = document.getElementById(`name-${name}`);
     }
 }
 

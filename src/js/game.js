@@ -4,20 +4,9 @@ import { pokemons } from './pokemons.js';
 
 export default class Game {
     constructor() {
-        this.player1Pokemon = pokemons[Math.floor(Math.random()*pokemons.length)];
-        this.player2Pokemon = pokemons[Math.floor(Math.random()*pokemons.length)];
-
-        this.player1 = new Pokemon({
-            selectors: 'player1',
-            ...this.player1Pokemon,
-        });
-        this.player2 = new Pokemon({
-            selectors: 'player2',
-            ...this.player2Pokemon,
-        });
-
-        this.renderPokemonUI(this.player1, this.player2);
-        this.renderPokemonUI(this.player2, this.player1);
+        this.$userControl = document.querySelector('.control');
+        this.renderStartScreen(this.$userControl);
+        // console.log(this.$userContorl);
     }
 
     renderPokemonUI = (player, target) => {
@@ -46,8 +35,35 @@ export default class Game {
         })
     }
 
-    startGame = () => {
+    renderStartScreen = (userControl) => {
+        const $startButton = document.createElement('button');
+        $startButton.classList.add('button');
+        $startButton.style.textAlign = 'center';
 
+        $startButton.innerText = 'Start Game';
+        $startButton.addEventListener('click', () => {
+            this.startGame();
+            $startButton.remove();
+        })
+
+        userControl.appendChild($startButton);
+    }
+
+    startGame = () => {
+        this.player1Pokemon = pokemons[Math.floor(Math.random()*pokemons.length)];
+        this.player2Pokemon = pokemons[Math.floor(Math.random()*pokemons.length)];
+
+        this.player1 = new Pokemon({
+            selectors: 'player1',
+            ...this.player1Pokemon,
+        });
+        this.player2 = new Pokemon({
+            selectors: 'player2',
+            ...this.player2Pokemon,
+        });
+
+        this.renderPokemonUI(this.player1, this.player2);
+        this.renderPokemonUI(this.player2, this.player1);
     }
 
     restartGame = () => {
