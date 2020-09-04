@@ -21,7 +21,7 @@ export default class Game {
     }
 
     renderPokemonUI = (player, target) => {
-        console.log(player);
+        // console.log(player);
         const { name, selector } = player;
 
         const $playerControl = document.getElementById(`${selector}-attack`);
@@ -55,6 +55,6 @@ export default class Game {
     }
 
     endGame = () => {
-
+        
     }
 }

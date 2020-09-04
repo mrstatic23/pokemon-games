@@ -64,9 +64,9 @@ export default class Pokemon extends Selectors {
   }; 
 
   attack = (action, targetPokemon) => {
-    const attackPower = this.attackRandom(action.minDamage, action.maxDamage);
-    this.changeHP(attackPower, targetPokemon);
-    this.generateLog(this, targetPokemon, attackPower, action.name)
+      const attackPower = this.attackRandom(action.minDamage, action.maxDamage);
+      this.changeHP(attackPower, targetPokemon);
+      this.generateLog(this, targetPokemon, attackPower, action.name)
     };
 
   attackRandom = (minDmg, maxDmg) => {
@@ -74,16 +74,11 @@ export default class Pokemon extends Selectors {
   }
     
   endGame = () => {
-    // console.log(player1);
-    // Game.startGame();
-    // for (const key in this.ability) {
-    //   if (this.ability.hasOwnProperty(key)) {
-    //     this.ability[key].btn.disabled = true;
-    //   }
-    // }
-    // this.attacks.forEach(item => {
-    //   console.log($btn);
-    // })
+    const $btn = document.querySelectorAll('button');
+
+    $btn.forEach(item => {
+      item.disabled = true;
+    })
   };
  
   generateLog = (attackerPokemon, targetPokemon, attackPower, abilityId) => {
