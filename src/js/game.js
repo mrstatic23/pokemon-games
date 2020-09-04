@@ -19,6 +19,11 @@ export default class Game {
         $playerControlHeader.innerText = name;
         $playerControl.appendChild($playerControlHeader)
 
+        player.elHealthBar.style.display = 'block';
+        // console.log(player.elHeathBar);
+        // console.log(player);
+
+
         player.attacks.forEach(item => {
             const $btn = document.createElement('button');
             const btnCount = clickCounter();

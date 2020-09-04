@@ -1,11 +1,10 @@
-import Game from "./game.js";
-
 class Selectors {
     constructor(name) {
         this.elHP = document.getElementById(`health-${name}`);
         this.elProgressBar = document.getElementById(`progressbar-${name}`);
         this.elImg = document.getElementById(`img-${name}`);
         this.elName = document.getElementById(`name-${name}`);
+        this.elHealthBar = document.getElementById(`bar-${name}`)
     }
 }
 
@@ -21,6 +20,8 @@ export default class Pokemon extends Selectors {
       this.attacks = attacks;
       this.img = img
       this.selector = selectors;
+
+      this.elName.innerText = name;
 
       this.renderHP();
   };
