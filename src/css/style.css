@@ -190,7 +190,9 @@ body {
     border: 3.5px solid #00a3e2;
     height: 18px;
     overflow: hidden;
+    /* display: none; */
 }
+
 .pokemon .details .hp .bar .health {
     width: 50%;
     height: 100%;
@@ -496,4 +498,8 @@ h1 {
 
 #logs p {
     margin: 5px 10px 10px 10px;
+}
+
+#bar-player1, #bar-player2 {
+    display: none;
 }
