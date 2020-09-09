@@ -2,5 +2,5 @@
 import Game from './game.js';
 
 const game = new Game();
-// game.startGame();
+game.startGame();
 // console.log(game);

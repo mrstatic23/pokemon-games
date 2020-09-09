@@ -1,16 +1,12 @@
 import Pokemon from './pokemon.js';
 import { clickCounter } from './utils.js';
-import { pokemons } from './pokemons.js';
+// import { pokemons } from './pokemons.js';
 
 export default class Game {
-    constructor() {
-        this.$userControl = document.querySelector('.control');
-        this.renderStartScreen(this.$userControl);
-        // console.log(this.$userContorl);
-    }
+    // constructor() {
+    // }
 
-    renderPokemonUI = (player, target) => {
-        // console.log(player);
+    renderPokemonUI(player, target) {
         const { name, selector } = player;
 
         const $playerControl = document.getElementById(`${selector}-attack`);
@@ -37,21 +33,23 @@ export default class Game {
         })
     }
 
-    renderStartScreen = (userControl) => {
+    renderStartScreen(userControl) {
         const $startButton = document.createElement('button');
         $startButton.classList.add('button');
         $startButton.style.textAlign = 'center';
 
         $startButton.innerText = 'Start Game';
         $startButton.addEventListener('click', () => {
-            this.startGame();
+            this.startMatch();
             $startButton.remove();
         })
 
         userControl.appendChild($startButton);
     }
 
-    startGame = () => {
+    async startMatch() {
+        console.log('Start Match');
+        const pokemons = await this.getPokemons('https://reactmarathon-api.netlify.app/api/pokemons');
         this.player1Pokemon = pokemons[Math.floor(Math.random()*pokemons.length)];
         this.player2Pokemon = pokemons[Math.floor(Math.random()*pokemons.length)];
 
@@ -66,6 +64,19 @@ export default class Game {
 
         this.renderPokemonUI(this.player1, this.player2);
         this.renderPokemonUI(this.player2, this.player1);
+    }
+
+
+
+    startGame() {
+        this.$userControl = document.querySelector('.control');
+        this.renderStartScreen(this.$userControl);
+    }
+
+    async getPokemons(url) {
+        const response = await fetch(url);
+        const body = await response.json();
+        return body; 
     }
 
 }
